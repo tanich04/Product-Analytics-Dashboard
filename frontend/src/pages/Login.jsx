@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,7 +16,10 @@ const Login = () => {
   
   const { login, register } = useAuth();
   const navigate = useNavigate();
-
+  useEffect(() => {
+  console.log('🌐 Frontend API URL:', import.meta.env.VITE_API_URL);
+  console.log('🔧 Full auth URL:', `${import.meta.env.VITE_API_URL}/auth/login`);
+}, []);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -33,13 +37,13 @@ const Login = () => {
       result = await login(formData.username, formData.password);
     } else {
       result = await register(
-        formData.username, 
-        formData.password, 
-        parseInt(formData.age), 
-        formData.gender
+      formData.username,
+      formData.password,
+      parseInt(formData.age),
+      formData.gender
       );
     }
-
+    
     if (result.success) {
       if (isLogin) {
         navigate('/dashboard');
