@@ -2,8 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
 import PrivateRoute from './components/PrivateRoute';
-
-// We'll create this next
 import Dashboard from './pages/Dashboard';
 
 function App() {
