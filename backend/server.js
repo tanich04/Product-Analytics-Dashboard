@@ -10,7 +10,6 @@ const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 
-// CORS configuration for production
 const corsOptions = {
   origin: [
     'https://dashboard-frontend-ten-zeta.vercel.app',
