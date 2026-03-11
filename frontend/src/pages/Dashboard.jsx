@@ -12,8 +12,7 @@ import { getAnalytics, trackClick, saveFiltersToCookies, loadFiltersFromCookies 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  
-  // Load saved filters from cookies or use defaults
+
   const savedFilters = loadFiltersFromCookies();
   
   const [filters, setFilters] = useState({
@@ -58,8 +57,7 @@ const Dashboard = () => {
         gender: filters.gender !== 'All' ? filters.gender : '',
         selectedFeature: filters.selectedFeature
       });
-      
-      // Transform feature names for display
+    
       const transformedBarData = (data.barChartData || []).map(item => ({
         ...item,
         display_name: item.feature_name.replace(/_/g, ' ')
@@ -91,13 +89,10 @@ const Dashboard = () => {
     if (data && data.activePayload && data.activePayload[0]) {
       const featureName = data.activePayload[0].payload.feature_name;
       
-      // Update selected feature
       setFilters(prev => ({ ...prev, selectedFeature: featureName }));
       
-      // Track bar chart click
       await trackClick('bar_chart_click');
       
-      // Fetch line chart data for this specific feature
       const startDateStr = filters.startDate instanceof Date 
         ? filters.startDate.toISOString().split('T')[0] 
         : new Date(filters.startDate).toISOString().split('T')[0];
@@ -118,7 +113,6 @@ const Dashboard = () => {
     }
   };
 
-  // Date range presets
   const setDatePreset = (preset) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -160,8 +154,6 @@ const Dashboard = () => {
       default:
         return;
     }
-    
-    // Update filters with new date range
     setFilters(prev => ({
       ...prev,
       startDate: start,
@@ -171,13 +163,11 @@ const Dashboard = () => {
     setTempDateRange({ start, end });
     setShowCustomRange(false);
     
-    // Track date filter change
     trackClick('date_filter');
   };
 
   const applyCustomRange = () => {
     if (tempDateRange.start && tempDateRange.end) {
-      // Set end date to end of day
       const endDate = new Date(tempDateRange.end);
       endDate.setHours(23, 59, 59, 999);
       
@@ -205,7 +195,6 @@ const Dashboard = () => {
     navigate('/login');
   };
 
-  // Format date for display
   const formatDateForDisplay = (date) => {
     if (!date) return '';
     const d = new Date(date);
@@ -667,7 +656,6 @@ const styles = {
   }
 };
 
-// Add spin animation
 const styleSheet = document.createElement("style");
 styleSheet.textContent = `
   @keyframes spin {
