@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import api from '../services/api'; // Import the configured api instance
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -10,16 +10,18 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('token'));
 
-  // Set token in api instance
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+  // Set axios default header
   if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 
   const login = async (username, password) => {
     try {
-      console.log('🔑 Login attempt to:', `${api.defaults.baseURL}/auth/login`);
+      console.log('Logging in to:', `${API_URL}/auth/login`);
       
-      const response = await api.post('/auth/login', {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         username,
         password
       });
@@ -27,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setToken(token);
       setUser(user);
@@ -37,17 +39,16 @@ export const AuthProvider = ({ children }) => {
       console.error('Login error:', error.response?.data || error.message);
       return { 
         success: false, 
-        error: error.response?.data?.error || 'Login failed. Is the backend running?'
+        error: error.response?.data?.error || 'Login failed' 
       };
     }
   };
 
   const register = async (username, password, age, gender) => {
     try {
-      console.log('📝 Registration attempt to:', `${api.defaults.baseURL}/auth/register`);
-      console.log('Data:', { username, age, gender });
+      console.log('Registering to:', `${API_URL}/auth/register`);
       
-      const response = await api.post('/auth/register', {
+      const response = await axios.post(`${API_URL}/auth/register`, {
         username,
         password,
         age: parseInt(age),
@@ -66,17 +67,16 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
-    delete api.defaults.headers.common['Authorization'];
+    delete axios.defaults.headers.common['Authorization'];
     setToken(null);
     setUser(null);
   };
 
   useEffect(() => {
-    // Verify token on load
     const verifyToken = async () => {
       if (token) {
         try {
-          // Optionally verify token with backend
+          // Optional: Verify token with backend
           setLoading(false);
         } catch (error) {
           logout();
