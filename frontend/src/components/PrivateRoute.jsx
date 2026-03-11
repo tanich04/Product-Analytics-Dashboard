@@ -36,7 +36,6 @@ const styles = {
   }
 };
 
-// Add this to your global CSS or create a style tag
 const styleSheet = document.createElement("style");
 styleSheet.textContent = `
   @keyframes spin {
