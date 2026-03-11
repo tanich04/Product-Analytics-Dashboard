@@ -16,18 +16,23 @@ function getRandomAge() {
 
 async function seedDatabase() {
   try {
-    console.log('Starting database seeding...');
+    console.log('🌱 Starting database seeding...');
+    console.log('Environment:', process.env.NODE_ENV || 'development');
     
+    // Test database connection
+    await sequelize.authenticate();
+    console.log('✅ Database connected successfully');
+
     // Check if we already have data
     const userCount = await User.count();
-    if (userCount > 10) {
-      console.log('Database already has data, skipping seed...');
+    if (userCount > 5) {
+      console.log(`📊 Database already has ${userCount} users, skipping seed...`);
       process.exit(0);
     }
 
-    // Sync database (alter: true for development)
-    await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
-    console.log('Database synced');
+    // Sync database
+    await sequelize.sync({ alter: true });
+    console.log('✅ Database synced');
 
     // Create 10 users
     const users = [];
@@ -39,7 +44,7 @@ async function seedDatabase() {
         gender: GENDERS[Math.floor(Math.random() * GENDERS.length)]
       });
       users.push(user);
-      console.log(`Created user: ${user.username}`);
+      console.log(`✅ Created user: ${user.username} (ID: ${user.id})`);
     }
 
     // Generate clicks for the last 60 days
@@ -67,7 +72,7 @@ async function seedDatabase() {
 
     // Bulk insert clicks
     await FeatureClick.bulkCreate(clicks);
-    console.log(`Created ${clicks.length} feature clicks`);
+    console.log(`✅ Created ${clicks.length} feature clicks`);
 
     // Add more recent clicks for date_filter
     const recentUsers = users.slice(0, 5);
@@ -83,15 +88,15 @@ async function seedDatabase() {
     }
     await FeatureClick.bulkCreate(recentClicks);
 
-    console.log('\nDatabase seeded successfully!');
-    console.log('Summary:');
+    console.log('\n✅ Database seeded successfully!');
+    console.log('📊 Summary:');
     console.log(`   - Users: ${users.length}`);
     console.log(`   - Total clicks: ${clicks.length + recentClicks.length}`);
     console.log(`   - Date range: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`);
     
     process.exit(0);
   } catch (error) {
-    console.error('Seeding error:', error);
+    console.error('❌ Seeding error:', error);
     process.exit(1);
   }
 }

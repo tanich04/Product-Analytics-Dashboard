@@ -12,14 +12,15 @@ const app = express();
 
 // CORS configuration for production
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend.vercel.app', 'http://localhost:5173'] // Add your Vercel URL
-    : 'http://localhost:5173',
+  origin: [
+    'https://dashboard-frontend-ten-zeta.vercel.app',
+    'https://dashboard-frontend-1y88wazqo-tanich04s-projects.vercel.app',
+    'http://localhost:5173'
+  ],
   credentials: true,
   optionsSuccessStatus: 200
 };
 
-// Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
 
