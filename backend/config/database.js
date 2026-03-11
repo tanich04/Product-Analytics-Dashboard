@@ -1,11 +1,10 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-// Determine which database URL to use
 const databaseUrl = process.env.DATABASE_URL || 
   `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
 
-console.log('Connecting to database...'); // Don't log the full URL for security
+console.log('Connecting to database...'); 
 
 const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
@@ -13,7 +12,7 @@ const sequelize = new Sequelize(databaseUrl, {
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false // Required for Render's PostgreSQL
+      rejectUnauthorized: false 
     }
   },
   pool: {
