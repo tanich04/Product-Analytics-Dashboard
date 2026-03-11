@@ -16,23 +16,20 @@ function getRandomAge() {
 
 async function seedDatabase() {
   try {
-    console.log('🌱 Starting database seeding...');
+    console.log('Starting database seeding...');
     console.log('Environment:', process.env.NODE_ENV || 'development');
     
-    // Test database connection
     await sequelize.authenticate();
-    console.log('✅ Database connected successfully');
+    console.log('Database connected successfully');
 
-    // Check if we already have data
     const userCount = await User.count();
     if (userCount > 5) {
-      console.log(`📊 Database already has ${userCount} users, skipping seed...`);
+      console.log(`Database already has ${userCount} users, skipping seed...`);
       process.exit(0);
     }
 
-    // Sync database
     await sequelize.sync({ alter: true });
-    console.log('✅ Database synced');
+    console.log('Database synced');
 
     // Create 10 users
     const users = [];
@@ -44,17 +41,15 @@ async function seedDatabase() {
         gender: GENDERS[Math.floor(Math.random() * GENDERS.length)]
       });
       users.push(user);
-      console.log(`✅ Created user: ${user.username} (ID: ${user.id})`);
+      console.log(`Created user: ${user.username} (ID: ${user.id})`);
     }
 
-    // Generate clicks for the last 60 days
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 60);
 
     const clicks = [];
     
-    // Generate 200 random clicks
     for (let i = 0; i < 200; i++) {
       const user = users[Math.floor(Math.random() * users.length)];
       const timestamp = randomDate(startDate, endDate);
@@ -70,11 +65,9 @@ async function seedDatabase() {
     // Sort clicks by timestamp (oldest first)
     clicks.sort((a, b) => a.timestamp - b.timestamp);
 
-    // Bulk insert clicks
     await FeatureClick.bulkCreate(clicks);
-    console.log(`✅ Created ${clicks.length} feature clicks`);
+    console.log(`Created ${clicks.length} feature clicks`);
 
-    // Add more recent clicks for date_filter
     const recentUsers = users.slice(0, 5);
     const recentClicks = [];
     for (let i = 0; i < 30; i++) {
@@ -88,15 +81,15 @@ async function seedDatabase() {
     }
     await FeatureClick.bulkCreate(recentClicks);
 
-    console.log('\n✅ Database seeded successfully!');
-    console.log('📊 Summary:');
+    console.log('\nDatabase seeded successfully!');
+    console.log('Summary:');
     console.log(`   - Users: ${users.length}`);
     console.log(`   - Total clicks: ${clicks.length + recentClicks.length}`);
     console.log(`   - Date range: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`);
     
     process.exit(0);
   } catch (error) {
-    console.error('❌ Seeding error:', error);
+    console.error('Seeding error:', error);
     process.exit(1);
   }
 }
