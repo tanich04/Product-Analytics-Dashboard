@@ -8,7 +8,6 @@ router.get('/', authenticate, async (req, res) => {
   try {
     const { startDate, endDate, ageGroup, gender, selectedFeature } = req.query;
 
-    // Build where clause for filtering
     const whereClause = {};
     const userWhereClause = {};
 
@@ -41,7 +40,6 @@ router.get('/', authenticate, async (req, res) => {
       userWhereClause.gender = gender;
     }
 
-    // Get users matching demographics
     let userIds = [];
     if (Object.keys(userWhereClause).length > 0) {
       const users = await User.findAll({ where: userWhereClause, attributes: ['id'] });
@@ -49,7 +47,6 @@ router.get('/', authenticate, async (req, res) => {
       if (userIds.length > 0) {
         whereClause.user_id = { [Sequelize.Op.in]: userIds };
       } else {
-        // No users match demographics, return empty data
         return res.json({
           barChartData: [],
           lineChartData: []
@@ -57,7 +54,6 @@ router.get('/', authenticate, async (req, res) => {
       }
     }
 
-    // Bar chart data: Total clicks per feature
     const barChartData = await FeatureClick.findAll({
       where: whereClause,
       attributes: [
@@ -68,7 +64,7 @@ router.get('/', authenticate, async (req, res) => {
       order: [[Sequelize.fn('COUNT', Sequelize.col('feature_name')), 'DESC']]
     });
 
-    // Line chart data: Daily clicks for selected feature or all features
+    // Line chart data
     const lineWhereClause = { ...whereClause };
     if (selectedFeature) {
       lineWhereClause.feature_name = selectedFeature;
@@ -82,7 +78,7 @@ router.get('/', authenticate, async (req, res) => {
       ],
       group: [Sequelize.fn('DATE', Sequelize.col('timestamp'))],
       order: [[Sequelize.fn('DATE', Sequelize.col('timestamp')), 'ASC']],
-      limit: 30 // Last 30 days
+      limit: 30 
     });
 
     res.json({
