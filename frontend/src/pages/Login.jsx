@@ -17,8 +17,8 @@ const Login = () => {
   const { login, register } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-  console.log('🌐 Frontend API URL:', import.meta.env.VITE_API_URL);
-  console.log('🔧 Full auth URL:', `${import.meta.env.VITE_API_URL}/auth/login`);
+  console.log('Frontend API URL:', import.meta.env.VITE_API_URL);
+  console.log('Full auth URL:', `${import.meta.env.VITE_API_URL}/auth/login`);
 }, []);
   const handleChange = (e) => {
     setFormData({
@@ -48,7 +48,6 @@ const Login = () => {
       if (isLogin) {
         navigate('/dashboard');
       } else {
-        // After registration, switch to login mode
         setIsLogin(true);
         setFormData({ ...formData, password: '' });
         setError('Registration successful! Please login.');
